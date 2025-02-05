@@ -3,7 +3,7 @@ package geoFinder
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 
@@ -19,12 +19,13 @@ func init() {
 
 func FindMe(long float64, lat float64) (country string, city string) {
 	API_KEY := os.Getenv("GEO_KEY")
+	API_URL := os.Getenv("GEO_URL")
 	if API_KEY == "" {
 		fmt.Println("API_KEY is not set")
 		return "", ""
 	}
 	// fetching  opencagedata api
-	url := fmt.Sprintf("https://api.opencagedata.com/geocode/v1/json?q=%f+%f&key=%s", long, lat, API_KEY)
+	url := fmt.Sprintf("%s?q=%f+%f&key=%s", API_URL, long, lat, API_KEY)
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Ha ocurrdio un error", err)
@@ -32,7 +33,7 @@ func FindMe(long float64, lat float64) (country string, city string) {
 	}
 	defer response.Body.Close()
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		fmt.Println("Ha ocurrdio un error al leer la respueta", err)
 		return "", ""
@@ -44,7 +45,12 @@ func FindMe(long float64, lat float64) (country string, city string) {
 				Country string `json:"country"`
 				City    string `json:"city"`
 			} `json:"components"`
+			Formatted string `json:"formatted"`
 		} `json:"results"`
+		Status struct {
+			Code    int    `json:"code"`
+			Message string `json:"message"`
+		} `json:"status"`
 	}
 
 	var result Result
@@ -54,6 +60,7 @@ func FindMe(long float64, lat float64) (country string, city string) {
 		return "", ""
 	}
 
+	fmt.Printf("%+v\n", result)
 	if len(result.Results) > 0 {
 		country = result.Results[0].Components.Country
 		city = result.Results[0].Components.City
