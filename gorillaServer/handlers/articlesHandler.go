@@ -3,11 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 func ArticlesHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+	// vars := mux.Vars(r)
 	fmt.Fprintf(w, "Articles!")
 }
