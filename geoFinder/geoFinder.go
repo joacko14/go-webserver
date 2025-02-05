@@ -5,11 +5,24 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
-const API_KEY = "365e0a9bdfce4a1ca3e47fc45fb8eb4e"
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+}
 
 func FindMe(long float64, lat float64) (country string, city string) {
+	API_KEY := os.Getenv("GEO_KEY")
+	if API_KEY == "" {
+		fmt.Println("API_KEY is not set")
+		return "", ""
+	}
 	// fetching  opencagedata api
 	url := fmt.Sprintf("https://api.opencagedata.com/geocode/v1/json?q=%f+%f&key=%s", long, lat, API_KEY)
 	response, err := http.Get(url)
