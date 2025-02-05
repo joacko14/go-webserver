@@ -7,5 +7,13 @@ import (
 
 func main() {
 	// gorillaserver.Start()
-	fmt.Println(geoFinder.FindMe(57.461459, -4.221189))
+	var lat, long float64
+
+	fmt.Print("Enter latitude: ")
+	fmt.Scan(&lat)
+
+	fmt.Print("Enter longitude: ")
+	fmt.Scan(&long)
+
+	fmt.Println(geoFinder.FindMe(lat, long))
 }
